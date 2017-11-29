@@ -1,6 +1,7 @@
 var renderDonorViewPage;
 var reorderQueue;
 var removeQueue;
+var unremoveCharacter;
 
 $(function () {
   //console.log(env);
@@ -300,7 +301,12 @@ $(function () {
           render += '<tr><td>'+characters[i].name+'</td>';
           render += '<td>'+characters[i].race+'</td>';
           render += '<td>'+characters[i].class+'</td>';
-          render += '<td>'+characters[i].state+'</td></tr>';
+          render += '<td>'+characters[i].state;
+          // show a un-remove button if in 'canceled' state
+          if(characters[i].state == 'canceled'){
+            render += ' <a href="javascript:unremoveCharacter('+donor.id+','+characters[i]['id']+');">unremove</a>';
+          }
+          render += '</td></tr>';
         }
         render += '</table>';
       }
@@ -388,6 +394,22 @@ $(function () {
       }
     });
   });
+
+  unremoveCharacter = function(donor_id, id){
+    var token = sessionStorage.getItem('access_token');
+    //issue json call to unremove character
+    $.ajax({
+      url: DNDAPI_ENDPOINT+"/queue/unremove/"+id,
+      type: 'post',
+      headers: {
+        'Authorization': "JWT " + token
+      },
+      dataType: 'json',
+      success: function(data) {
+        renderDonorViewPage(donor_id);
+      }
+    });
+  }
 
   function renderAddDonationPage(donor_id){
     $.each(pages, function(index, value) {

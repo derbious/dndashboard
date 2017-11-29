@@ -1,6 +1,6 @@
 all: build
 
 build:
-	docker rmi dndweb:2 -f
-	docker build . -t dndweb:2
+	docker rmi dndweb:3 -f
+	docker build . -t dndweb:3
 
